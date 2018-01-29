@@ -1,0 +1,75 @@
+.header {
+	width: 100%;
+	background: white;
+	padding: 6px 0px;
+	margin-bottom: 10px;
+	border-bottom: 1px #999 solid;
+}
+
+.footer {
+	width: 100%;
+	background: white;
+	padding: 4px 0px;
+	margin-top:: 5px;
+	border-top: 1px #999 solid;
+	bottom: 0px;
+	position: fixed;
+}
+
+.back {
+	margin: 5px 5px;
+	padding: 5px 5px;
+}
+
+.chooseLayers {
+	padding-left: 10px;
+	margin-right: 50px;
+}
+
+* {
+	margin: 0;
+	font-family: "Open Sans", Segoe UI light, Verdana, Tahoma,Helvetica,sans-serif;
+}
+
+body {
+	background-color: #DDD;
+}
+
+p, h3 {
+	padding-left: 5px;
+}
+
+li.buttons {
+	padding: 10px;
+	display: inline-block;
+	margin-right: 2.5px;
+	margin-bottom: 2.5px;
+}
+
+p.hint {
+	display: inline-block;
+	padding: 4px;
+	font-size: 15px;
+}
+
+a {
+	text-decoration: none;
+	background-color: #AAA;
+	border: 1px #AAA solid;
+	padding: 5px 10px;
+	color: white;
+}
+
+a:hover {
+	border: 1px #999 solid;
+	background-color: #DDD;
+}
+
+.rotate-north {
+	top: 65px;
+	left: .5em;
+}
+
+.ol-touch .rotate-north {
+	top: 80px;
+}
