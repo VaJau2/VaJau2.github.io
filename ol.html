@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Map Testing</title>
+	<link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+	<!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+	<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+	<script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+	<script src="base.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div id="map" class="map"></div>
+	<div class = "panel">
+		<select id="selectPlane" class="selectPlane">
+			<option>null</option>
+		</select> 
+		<label id="labelFrom">null</label>
+		<label id="labelTo">null</label>
+		<label id="labelWhere">null</label>
+	</div>
+	<script>
+    function getRandomArbitary(min, max) //всякие функции
+    {
+    	return Math.round(Math.random() * (max - min) + min);
+    }
+    function lerp (start, end, amt){
+    	return (1-amt)*start+amt*end;
+    }
+
+    function initiatePlaneCity(citiesBegin, citiesEnd, ready, i) {
+      if(citiesEnd[i] === undefined) {
+        var randomNumber1 = getRandomArbitary(0,citiesName.length - 1);
+        citiesBegin[i] =  randomNumber1;
+      }
+      else citiesBegin[i] = citiesEnd[i];
+      var randomNumber2 = getRandomArbitary(0,citiesName.length - 1);
+      while(randomNumber2 === randomNumber1) {
+        randomNumber2 = getRandomArbitary(0,citiesName.length - 1);
+      }
+      citiesEnd[i] = randomNumber2;
+      ready[i][0] = 0;
+      ready[i][1] = 0;
+    }
+
+    var map = new ol.Map({
+    	layers: [
+    	new ol.layer.Tile({
+    		source: new ol.source.OSM()
+    	})
+    	],
+    	target: 'map',
+    	view: new ol.View({
+    		center: [0, 0],
+    		zoom: 2
+    	})
+    });
+
+    var closenPlaneStyle = new ol.style.Style({ 
+    	image: new ol.style.Circle({
+    		radius: 2.5,
+    		snapToPixel: false,
+    		fill: new ol.style.Fill({color: 'red'})
+    	})
+    });
+
+    var planeStyle = new ol.style.Style({ 
+    	image: new ol.style.Circle({
+    		radius: 2.5,
+    		snapToPixel: false,
+    		fill: new ol.style.Fill({color: 'blue'})
+    	})
+    });
+
+    var planeCount = 15;
+
+    selectPlane.length = planeCount;  //записываем в менюшку все самолеты
+    for(var i = 0; i < planeCount; i++) {
+    	selectPlane.options[i].text = 'Самолет # ' + i.toString();
+    	selectPlane.options[i].value = i;
+    }
+
+    var citiesBegin = [];
+    var citiesEnd = [];
+    var ready = [];
+    for(var i = 0; i < planeCount; i++) {
+     ready.push([0,0]);
+   }
+
+    for(var i = 0; i < planeCount; i++) { //выбираем рандомное направление для полетов
+      initiatePlaneCity(citiesBegin, citiesEnd, ready, i);
+    }
+    var coordinates = []; 
+    for (var i = 0; i < planeCount; i++) { //выставляем начальные координаты 
+    	let x = citiesBase[citiesBegin[i]][0];
+    	let y = citiesBase[citiesBegin[i]][1];
+    	coordinates.push([x,y]);
+    }
+
+    var onetime = 0;
+
+    map.on('postcompose', function(event) {
+    	var vectorContext = event.vectorContext;
+    	var frameState = event.frameState;
+
+     console.log('ready X is ' + ready[0][0] + ' ready Y is ' + ready[0][1]);
+
+     for (var i = 0; i < planeCount; i++) {
+      var x, y;
+
+      var dx = citiesBase[citiesEnd[i]][0] - citiesBase[citiesBegin[i]][0];
+      var dy = citiesBase[citiesEnd[i]][1] - citiesBase[citiesBegin[i]][1];
+      var length = Math.sqrt(dx*dx + dy*dy);
+      x = dx / length;
+      y = dy / length;
+
+      if(ready[i][0] === 0 || ready[i][1] === 0) {
+        if(coordinates[i][0] < citiesBase[citiesEnd[i]][0] - 10000 || coordinates[i][0] > citiesBase[citiesEnd[i]][0] + 10000)
+         coordinates[i][0] += x * 10000;
+       else ready[i][0] = getRandomArbitary(20,120);
+       if(coordinates[i][1] < citiesBase[citiesEnd[i]][1] - 10000 || coordinates[i][1] > citiesBase[citiesEnd[i]][1] + 10000)
+         coordinates[i][1] += y * 10000;
+       else ready[i][1] = getRandomArbitary(20,120);
+     }
+
+     if(ready[i][0] > 2 && ready[i][1] > 2) {
+      ready[i][0] -= 1;
+      ready[i][1] -= 1;
+    } 
+    else if(ready[i][0] > 0 && ready[i][1] > 0) {
+      initiatePlaneCity(citiesBegin, citiesEnd, ready, i);
+    }
+  }
+
+  vectorContext.setStyle(planeStyle);
+  vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
+
+
+     var chosenPlane = new ol.geom.Point(coordinates[selectPlane.value]); //окрашиваем выбранный самолет в другой цвет
+     vectorContext.setStyle(closenPlaneStyle);
+     vectorContext.drawGeometry(chosenPlane);
+
+     labelFrom.innerHTML = 'из: ' + citiesName[citiesBegin[selectPlane.value]];
+     labelTo.innerHTML = 'в: ' + citiesName[citiesEnd[selectPlane.value]];
+     if(ready[selectPlane.value][0] != 0 && ready[selectPlane.value][1] != 0) labelWhere.innerHTML = 'ожидает';
+     else labelWhere.innerHTML = 'в пути';
+     map.render();
+   });
+
+    map.render();
+  </script>
+</body>
+</html>
