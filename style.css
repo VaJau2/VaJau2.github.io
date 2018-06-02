@@ -25,8 +25,9 @@
     position: absolute;
     right: 0;
     top: 0;
-    background: rgb(127, 157, 195);
+    background: rgba(127, 157, 195, 0.8);
     border-radius: 0 0 0 8px;
     padding: 7px;
-    border: rgba(204, 229, 236, 0.9) 2.5px solid;
+    border: rgba(204, 229, 236, 0.8) 2.5px solid;
+    zoom: 85%;
 }
