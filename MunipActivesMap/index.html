@@ -66,21 +66,24 @@
            for(var j in mapLayers[i]._layers)
            {
              if(map.hasLayer(mapLayers[i])) {
-               if(mapLayers[i]._layers[j].feature.properties.Specific.includes(query)) {
+               let mapSpecific = mapLayers[i]._layers[j].feature.properties.Specific.toLowerCase();
+               if(mapSpecific.includes(query)) {
                  if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
                    tempPoints.push(mapLayers[i]._layers[j].feature);
                    tempLayerNum = i;
                    tempPointNum = j;
                  }
                }
-               if(mapLayers[i]._layers[j].feature.properties.Name.includes(query)) {
+               let mapName = mapLayers[i]._layers[j].feature.properties.Name.toLowerCase();
+               if(mapName.includes(query)) {
                  if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
                    tempPoints.push(mapLayers[i]._layers[j].feature);
                    tempLayerNum = i;
                    tempPointNum = j;
                  }
                }
-               if(mapLayers[i]._layers[j].feature.properties.Adress.includes(query)) {
+               let mapAdress = mapLayers[i]._layers[j].feature.properties.Adress.toLowerCase();
+               if(mapAdress.includes(query)) {
                  if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
                    tempPoints.push(mapLayers[i]._layers[j].feature);
                    tempLayerNum = i;
