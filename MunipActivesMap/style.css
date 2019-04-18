@@ -1,0 +1,57 @@
+#labelFrom {
+	background-color: white;
+	padding: 3px;
+}
+
+#labelTo {
+	background-color: white;
+	padding: 3px;
+}
+
+#labelWhere {
+	background-color: white;
+	padding: 3px;
+}
+
+#mapid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: rgba(127, 195, 157, 0.8);
+    border-radius: 0 0 0 8px;
+    padding: 2px;
+    border: rgba(204, 236, 229, 0.8) 2.5px solid;
+    zoom: 85%;
+}
+
+.askOnePoint {
+	visibility: hidden;
+	top: 35%;
+	left: 35%;
+	position: absolute;
+	background: rgba(127, 195, 157, 0.8);
+	border-radius: 8px;
+	border: rgba(204, 236, 229, 0.8) 2.5px solid;
+}
+
+select {
+	width: 245px;
+}
+
+p {
+	margin: 0;
+	padding: 5px;
+}
+
+.askOnePointHeader {
+	color: white;
+	background: rgba(55, 55, 55, 0.8);
+}
