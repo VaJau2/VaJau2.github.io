@@ -10,23 +10,27 @@
    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
   crossorigin=""></script>
-  <script src="geoJSON/Reestr1.js"></script>
-  <script src="geoJSON/MunicipalLandReestr.js"></script>
+  <script src="geoJSON/NonLivingBuildsReestr.js"></script>
+  <script src="geoJSON/FactoryReestr.js"></script>
+  <script src="geoJSON/EducationReestr.js"></script>
 </head>
 <body>
    <div id="mapid"></div>
    <div class = "panel">
-     <p>
- 		    <input type="text" size="20" id="FindTextBox">
+     <div class="panelElementTop">
+ 		    <input type="text" size="20" id="FindTextBox" class="findTextBox">
  		    <input type="submit" value="Поиск" id="FindButton">
-    </p>
-    <p>
+    </div>
+    <div class="panelElementDown">
       <select multiple id="FilterSelect">
-        <option>Реестр Зданий</option>
-        <option>Реестр Муниципальных Земель</option>
+        <option>Реестр Муниципальных Земель (регионы)</option>
+        <option>Реестр Муниципальных Земель (здания)</option>
+        <option>Жилищный фонд и нежилые помещения</option>
+        <option>Реестр предприятий и организаций</option>
+        <option>Реестр учреждений образования</option>
       </select>
       <input type="submit" value="Фильтр" id="FilterButton">
-    </p>
+    </div>
  	</div>
   <div class="askOnePoint" id="askOnePoint">
     <p class="askOnePointHeader">Выберите один из активов</p>
@@ -36,116 +40,9 @@
     </select>
     <input type="submit" value="Выбрать" id="askOnePointButton">
   </div>
+   <script src="Buttons.js"></script>
    <script>
      var mapLayers = [];
-     //var allPoints = [];
-     //var popups = [];
-
-     //функция перемещает карту на актив и открывает его менюшку
-     function zoomTo(feature, layerNum, pointNum)
-     {
-       var latLing = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-       map.flyTo(latLing);
-       //тк попап лойерс - это куча одинаковых мап лойерсов, надо заменить этот внизу на мап лойер
-       //popupLayers[popupNum].openPopup(popups[popupNum]);
-       mapLayers[layerNum]._layers[pointNum].openPopup();
-     }
-
-     //функционал кнопки поиска активов
-     FindButton.onclick = function() {
-       //тк активов может быть несколько, нужно создать их массив
-       var tempPoints = []
-       var query = FindTextBox.value;
-       var tempLayerNum = 0;
-       var tempPointNum = 0;
-       if(query) {
-         //проходим по всем реестрам
-         for(var i = 0; i < mapLayers.length; i++)
-         {
-           //как можно достать до каждой точки в реестре
-           for(var j in mapLayers[i]._layers)
-           {
-             if(map.hasLayer(mapLayers[i])) {
-               let mapSpecific = mapLayers[i]._layers[j].feature.properties.Specific.toLowerCase();
-               if(mapSpecific.includes(query)) {
-                 if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
-                   tempPoints.push(mapLayers[i]._layers[j].feature);
-                   tempLayerNum = i;
-                   tempPointNum = j;
-                 }
-               }
-               let mapName = mapLayers[i]._layers[j].feature.properties.Name.toLowerCase();
-               if(mapName.includes(query)) {
-                 if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
-                   tempPoints.push(mapLayers[i]._layers[j].feature);
-                   tempLayerNum = i;
-                   tempPointNum = j;
-                 }
-               }
-               let mapAdress = mapLayers[i]._layers[j].feature.properties.Adress.toLowerCase();
-               if(mapAdress.includes(query)) {
-                 if(!tempPoints.includes(mapLayers[i]._layers[j].feature)) {
-                   tempPoints.push(mapLayers[i]._layers[j].feature);
-                   tempLayerNum = i;
-                   tempPointNum = j;
-                 }
-               }
-             }
-           }
-         }
-
-         if(tempPoints.length == 0) {
-           alert("Поиск не дал результатов.");
-         }
-         else if(tempPoints.length == 1) { //если нашелся один актив, отправляемся на него
-           zoomTo(tempPoints[0], tempLayerNum, tempPointNum);
-         }
-         else { //если нашлось несколько активов, загружаем менюшку с выбором одного из них
-           askOnePointSelect.options.length = 0;
-           for(var i = 0; i < tempPoints.length; i++)
-           {
-             var opt = document.createElement('option');
-             opt.value = tempPoints[i].properties.Name.toString();
-             opt.innerHTML = tempPoints[i].properties.Name.toString();
-             askOnePointSelect.appendChild(opt);
-           }
-           askOnePoint.style.visibility = 'visible';
-         }
-       }
-       else {
-         alert("Введите название актива, его тип или адрес.");
-       }
-     };
-
-     //функционал кнопки одного актива из нескольких во время поиска
-     askOnePointButton.onclick = function() {
-       var pointName = askOnePointSelect.options[askOnePointSelect.selectedIndex].value;
-       for(var i = 0; i < mapLayers.length; i++) {
-         for(var j in mapLayers[i]._layers) {
-           if(mapLayers[i]._layers[j].feature.properties.Name == pointName) {
-             zoomTo(mapLayers[i]._layers[j].feature, i, j);
-             break;
-           }
-         }
-
-       }
-       askOnePoint.style.visibility = 'hidden';
-     };
-
-     FilterButton.onclick = function() {
-       for(var i = 0; i < FilterSelect.options.length; i++) {
-         if(FilterSelect.options[i].selected) {
-           if(!map.hasLayer(mapLayers[i])) {
-             mapLayers[i].addTo(map);
-           }
-         }
-         else {
-           if(map.hasLayer(mapLayers[i])) {
-              mapLayers[i].removeFrom(map);
-           }
-         }
-       }
-     }
 
      var map = L.map('mapid').setView([51.505, -0.09], 13);
      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
@@ -156,73 +53,50 @@
    		id: 'mapbox.light'
    	}).addTo(map);
 
-    //функция, которая создает текст для менюшки у активов
-    function buildPopupText(feature) {
-      var popupContent = "";
-      if(feature.properties.Specific)
-      {
-        popupContent += "<p>" + feature.properties.Specific + "</p>";
-      }
-      if (feature.properties.Name) {
-        popupContent += "<p>Название: " + feature.properties.Name + "</p>";
-      }
-      if (feature.properties.Adress) {
-        popupContent += "<p>Адрес: " + feature.properties.Adress + "</p>";
-      }
-      if (feature.properties.Area) {
-        popupContent += "<p>Площадь: " + feature.properties.Area + "</p>";
-      }
-      if (feature.properties.BalHolder) {
-        popupContent += "<p>Балансодержатель: " + feature.properties.BalHolder + "</p>";
-      }
-      if (feature.properties.BalHoldNum) {
-        popupContent += "<p>Реестровый номер балансодержателя: " + feature.properties.BalHoldNum + "</p>";
-      }
-      if (feature.properties.FloorNum) {
-        popupContent += "<p>Количество этажей: " + feature.properties.FloorNum + "</p>";
-      }
-      if (feature.properties.RegNum) {
-        popupContent += "<p>Номер в реестре: " + feature.properties.RegNum + "</p>";
-      }
-      return popupContent;
-    }
-
     //функция, которая загружает всякие штуки с точками на карте
     function onEachFeature(feature, layer) {
       var popupContent = buildPopupText(feature);
       var popup = layer.bindPopup(popupContent);
     }
 
-    //загружаем геожсон файл отдельно
-    mapLayers.push(L.geoJSON(BuildReestrGeoJSON,
-      {
-        onEachFeature: onEachFeature,
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#ff7800",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-          });
-        }
+    mapLayers.push(L.tileLayer.wms("http://pkk5.rosreestr.ru/arcgis/services/Cadastre/CadastreWMS/MapServer/WMSServer", {
+      layers: "8",
+      format: 'image/png',
+      transparent: true,
+      attribution: "Публичная кадастровая карта росреестра"
     }).addTo(map));
 
-    mapLayers.push(L.geoJSON(MunicipalLandGeoJSON,
+    mapLayers.push(L.tileLayer.wms("http://pkk5.rosreestr.ru/arcgis/services/Cadastre/CadastreWMS/MapServer/WMSServer", {
+      layers: "9",
+      format: 'image/png',
+      transparent: true,
+    }).addTo(map));
+
+    //загружаем геожсон файл отдельно
+    mapLayers.push(L.geoJSON(NonLivingBuildsReestrGeoJSON,
       {
         onEachFeature: onEachFeature,
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#50ff00",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-          });
-        }
-    }).addTo(map));
+        style: function (feature) {
+          return {color: '#3388ff'};
+		    }
+      }).addTo(map));
+
+    mapLayers.push(L.geoJSON(FactoryReestrGeoJSON,
+      {
+        onEachFeature: onEachFeature,
+        style: function (feature) {
+          return {color: '#AA0551'};
+		    }
+      }).addTo(map));
+
+      mapLayers.push(L.geoJSON(EducationReestrGeoJSON,
+        {
+          onEachFeature: onEachFeature,
+          style: function (feature) {
+            return {color: '#42AB42'};
+  		    }
+        }).addTo(map));
+
 
     map.setView(L.latLng([53.694503,55.059084]));
    </script>
