@@ -20,11 +20,11 @@ function zoomTo(feature, layerNum, pointNum)
 }
 
 function openFindPanel() {
-  if(findPanel.style.visibility == 'hidden') {
-    findPanel.style.visibility = 'visible';
+  if(findPanel.style.visibility == 'visible') {
+     findPanel.style.visibility = 'hidden';
   }
   else {
-    findPanel.style.visibility = 'hidden';
+    findPanel.style.visibility = 'visible';
   }
 }
 
