@@ -16,89 +16,59 @@
 </head>
 <body>
    <div id="mapid"></div>
-   <div class = "panel">
-     <div class="panelElementTop">
- 		    <input type="text" size="20" id="FindTextBox" class="findTextBox">
- 		    <input type="submit" value="Поиск" id="FindButton">
-    </div>
+   <div class = "buttonFind" id="buttonFind" onclick="openFindPanel()"><img src="FindImage.png"></div>
+   <div class = "panel" id="panedInRight">
+     <div class = "buttonPanel" id="hideButton">
+       <div class = "arrow"></div>
+     </div>
     <div class="panelElementDown">
-      <select multiple id="FilterSelect">
-        <option>Реестр Муниципальных Земель (регионы)</option>
-        <option>Реестр Муниципальных Земель (здания)</option>
-        <option>Жилищный фонд и нежилые помещения</option>
-        <option>Реестр предприятий и организаций</option>
-        <option>Реестр учреждений образования</option>
-      </select>
-      <input type="submit" value="Фильтр" id="FilterButton">
+      <p><input type="checkbox" id="Check0" value="0" checked onclick = "hideLayer(Check0.checked, 0)">Реестр Муниципальных Земель (регионы)</p>
+      <p><input type="checkbox" id="Check1" value="1" checked onclick = "hideLayer(Check1.checked, 1)">Реестр Муниципальных Земель (здания)</p>
+      <p><input type="checkbox" id="Check2" value="2" checked onclick = "hideLayer(Check2.checked, 2)">Жилищный фонд и нежилые помещения</p>
+      <p><input type="checkbox" id="Check3" value="3" checked onclick = "hideLayer(Check3.checked, 3)">Реестр предприятий и организаций</p>
+      <p><input type="checkbox" id="Check4" value="4" checked onclick = "hideLayer(Check4.checked, 4)">Реестр учреждений образования</p>
     </div>
  	</div>
-  <div class="askOnePoint" id="askOnePoint">
-    <p class="askOnePointHeader">Выберите один из активов</p>
+
+  <div class="panelBase findPanel" id="findPanel">
+    <div class="findPanelHeader" id="findPanelHeader">
+      <img src="FindImage.png" style="position: absolute; left: -2px; top: -2px;">
+      Поиск
+      <div class="findPanelExit" onclick="openFindPanel()"><div class="findPanelExitIcon"></div></div>
+    </div>
+    <div class="findPanelBody">
+    <p>Муниципальное образование:</p> <input id="findInput1" type="text" class="findInput findInput1">
+    <p>Вид имущества:</p>
+    <select id="findInput2" class="findInput findInput2">
+        <option value="Помещение">Помещение</option>
+        <option value="Здание">Здание</option>
+        <option value="Корпус">Корпус</option>
+    </select>
+    <p class="findPanelLeftText">Учетный номер имущества:</p> <input id="findInput3" type="text" class="findInput findInput3">
+    <p>Наименование:</p> <input id="findInput4" type="text" class="findInput findInput4">
+    <p class="findPanelRightText">Адрес:</p> <textarea id="findInput5" type="text"class="findInput findInput5" cols="40"></textarea>
+    <p class="findPanelDownText">Балансодержатель:</p> <textarea id="findInput6" type="text"class="findInput findInput6" cols="40"></textarea>
+    <p class="findPanelDownButtons">
+      <input class="findPanelLeftButton" type="button" value="Найти по заданным критериям" onclick="findActive()">
+      <input type="button" value="Сброс критериев" onclick="cancelCriteria()">
+      <input type="button" value="Отмена" onclick="openFindPanel()">
+    </p>
+  </div>
+  </div>
+
+  <div class="panelBase askOnePoint" id="askOnePoint">
+    <div class="findPanelHeader" id="askOnePointHeader">
+      Выберите один из активов
+      <div class="findPanelExit" onclick="closeAskOnePoint()"><div class="findPanelExitIcon"></div></div>
+    </div>
+
     <select multiple id="askOnePointSelect">
       <option>Актив 1</option>
       <option>Актив 2</option>
     </select>
     <input type="submit" value="Выбрать" id="askOnePointButton">
   </div>
+   <script src="Main.js"></script>
    <script src="Buttons.js"></script>
-   <script>
-     var mapLayers = [];
-
-     var map = L.map('mapid').setView([51.505, -0.09], 13);
-     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-   		maxZoom: 18,
-   		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-   			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-   			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-   		id: 'mapbox.light'
-   	}).addTo(map);
-
-    //функция, которая загружает всякие штуки с точками на карте
-    function onEachFeature(feature, layer) {
-      var popupContent = buildPopupText(feature);
-      var popup = layer.bindPopup(popupContent);
-    }
-
-    mapLayers.push(L.tileLayer.wms("http://pkk5.rosreestr.ru/arcgis/services/Cadastre/CadastreWMS/MapServer/WMSServer", {
-      layers: "8",
-      format: 'image/png',
-      transparent: true,
-      attribution: "Публичная кадастровая карта росреестра"
-    }).addTo(map));
-
-    mapLayers.push(L.tileLayer.wms("http://pkk5.rosreestr.ru/arcgis/services/Cadastre/CadastreWMS/MapServer/WMSServer", {
-      layers: "9",
-      format: 'image/png',
-      transparent: true,
-    }).addTo(map));
-
-    //загружаем геожсон файл отдельно
-    mapLayers.push(L.geoJSON(NonLivingBuildsReestrGeoJSON,
-      {
-        onEachFeature: onEachFeature,
-        style: function (feature) {
-          return {color: '#3388ff'};
-		    }
-      }).addTo(map));
-
-    mapLayers.push(L.geoJSON(FactoryReestrGeoJSON,
-      {
-        onEachFeature: onEachFeature,
-        style: function (feature) {
-          return {color: '#AA0551'};
-		    }
-      }).addTo(map));
-
-      mapLayers.push(L.geoJSON(EducationReestrGeoJSON,
-        {
-          onEachFeature: onEachFeature,
-          style: function (feature) {
-            return {color: '#42AB42'};
-  		    }
-        }).addTo(map));
-
-
-    map.setView(L.latLng([53.694503,55.059084]));
-   </script>
 </body>
 </html>

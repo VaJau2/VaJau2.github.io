@@ -13,27 +13,77 @@
 	padding: 3px;
 }
 
+body {
+	margin: 0;
+	font-size: 14px;
+}
+
 #mapid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width:100%;
+	margin: 0;
+	padding: 0;
 }
 
 .panel {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: rgba(127, 195, 157, 0.8);
-    border-radius: 0 0 0 8px;
-    padding: 2px;
-    border: rgba(204, 236, 229, 0.8) 2.5px solid;
-		height: 180px;
+		position: fixed;
+		right: -25%;
+		top: 0;
+		margin: 0;
+		padding: 0;
+		width: 25%;
+		height: 100%;
+		border-left: rgba(24, 26, 27, 0.7) 5px solid;
+		background-color: rgb(230, 240, 230);
 }
 
 .panelElementTop {
 	margin: 4px;
+}
+
+.buttonPanel {
+	background-color: rgba(24, 26, 27, 0.7);
+	height: 34px;
+	width: 24px;
+	position: absolute;
+	top: 46%;
+	left: -29px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.buttonPanel:hover .arrow {
+	background-color: rgba(238, 238, 236, 0.6);
+	margin: 35%;
+	height: 50%;
+	width: 25%;
+}
+
+.arrow {
+	background-color: rgba(238, 238, 236, 0.7);
+	clip-path: polygon(27% 0, 100% 50%, 31% 100%, 0% 100%, 61% 50%, 0% 0%);
+	margin: 40%;
+	height: 40%;
+	width: 15%;
+}
+
+.buttonFind {
+	background-color: white;
+	position: absolute;
+	left: 10px;
+	top: 80px;
+	width: 30px;
+	height: 30px;
+	border: rgb(190, 190, 190) 2px solid;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.buttonFind:hover {
+	background-color: rgb(235, 235, 235);
 }
 
 .panelElementDown {
@@ -41,25 +91,152 @@
 	height: 70%;
 }
 
-.findTextBox {
-	width: 317px;
+.panelBase {
+	font-size: 12px;
+	top: 15%;
+	left: 25%;
+	position: absolute;
+	background: rgb(136, 138, 139);
+	border: lightgrey 1.5px solid;
+}
+
+.findPanel {
+	visibility: hidden;
+	width: 645px;
+	height: 270px;
+}
+
+.findPanelHeader {
+	padding: 5px;
+	background-color: white;
+	text-align: center;
+}
+
+.findPanelBody {
+	padding-left: 60px;
+	padding-top: 5px;
+	padding-top: 5px;
+}
+
+.findPanelExit {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 25px;
+	width: 35px;
+}
+
+.findPanelExit:hover {
+	background-color: rgb(239, 41, 41);
+}
+
+.findPanelExitIcon:before, .findPanelExitIcon:after {
+	position: absolute;
+	left: 17px;
+	top: 3px;
+	content: ' ';
+	height: 20px;
+	width: 2px;
+	background-color: #333;
+}
+
+.findPanelExitIcon:before {
+	transform: rotate(45deg);
+}
+
+.findPanelExitIcon:after {
+	transform: rotate(-45deg);
+}
+
+.findInput {
+	color: black;
+	background-color: white;
+	border: black 1.5px solid;
+	position: absolute;
+	height: 20px;
+}
+
+.findInput1 {
+	left: 260px;
+	top: 39px;
+	width: 370px;
+}
+
+.findInput2 {
+	left: 170px;
+	top: 67px;
+	width: 130px;
+}
+
+.findPanelLeftText {
+	position: absolute;
+	left: 310px;
+	top: 58px;
+}
+
+.findInput3 {
+	left: 500px;
+	top: 67px;
+	width: 130px;
+}
+
+.findInput4 {
+	left: 170px;
+	top: 95px;
+	width: 460px;
+}
+
+.findPanelRightText {
+	position: relative;
+	left: 55px;
+}
+
+.findInput5 {
+	left: 170px;
+	top: 124px;
+	width: 460px;
+	height: 40px;
+}
+
+.findPanelDownText {
+	position: absolute;
+	left: 35px;
+	top: 160px;
+}
+
+.findInput6 {
+	left: 170px;
+	top: 175px;
+	width: 460px;
+	height: 40px;
+}
+
+.findPanelDownButtons {
+	position: relative;
+	top: 80px;
+}
+
+.findPanelLeftButton {
+	position: relative;
+	left: -39px;
 }
 
 .askOnePoint {
 	visibility: hidden;
 	top: 35%;
 	left: 35%;
-	position: absolute;
-	background: rgba(127, 195, 157, 0.8);
-	border-radius: 8px;
-	border: rgba(204, 236, 229, 0.8) 2.5px solid;
+	width: 400px;
 }
 
-select {
-	height: 100%;
+.askOnePoint select {
+	background: white;
+	border: black 1.5px solid;
+	color: black;
+	width: 390px;
+	margin: 5px;
 }
 
-.askOnePointHeader {
-	color: white;
-	background: rgba(55, 55, 55, 0.8);
+.askOnePoint input {
+	margin-left: 36%;
+	margin-bottom: 2px;
 }
